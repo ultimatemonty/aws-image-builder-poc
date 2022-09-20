@@ -1,5 +1,4 @@
 name: CI
-environment: prod
 
 on:
   push:
@@ -15,6 +14,7 @@ jobs:
   lint:
     name: "Lint"
     runs-on: ubuntu-latest
+    environment: prod
     timeout-minutes: 10
 
     steps:
@@ -32,6 +32,7 @@ jobs:
   test:
     name: "Test"
     runs-on: ubuntu-latest
+    environment: prod
     timeout-minutes: 10
 
     steps:
@@ -49,6 +50,7 @@ jobs:
   build:
     name: Build, tag, and push image to Amazon ECR
     runs-on: ubuntu-latest
+    environment: prod
     needs: [lint, test]
     timeout-minutes: 10
 
