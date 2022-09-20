@@ -1,4 +1,5 @@
 name: CI
+environment: prod
 
 on:
   push:
