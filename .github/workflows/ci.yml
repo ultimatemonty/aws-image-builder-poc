@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - master
   pull_request: {}
 
 concurrency:
@@ -45,3 +44,29 @@ jobs:
         run: npm ci
       - name: Run Tests
         run: npm test
+
+  build:
+    name: Build, tag, and push image to Amazon ECR
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    timeout-minutes: 10
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ECR_ARN }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: aws-docker-poc
+          IMAGE_TAG: unstable
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
