@@ -1,4 +1,7 @@
 name: CI
+permissions:
+  id-token: write # required to use OIDC authentication
+  contents: read # required to checkout the code from the rep
 
 on:
   push:
@@ -53,9 +56,6 @@ jobs:
     environment: prod
     needs: [lint, test]
     timeout-minutes: 10
-    permissions:
-      id-token: write # required to use OIDC authentication
-      contents: read # required to checkout the code from the rep
 
     steps:
       - name: Configure AWS credentials
